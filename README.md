@@ -1,18 +1,35 @@
-# 🏎️ AWS F1 Static Site Project
+## 🚀 Deployment Workflow
 
-A personal Formula 1–themed homelab project that deploys a static website to AWS S3 using Terraform.
+1. **Ubuntu VM Setup**  
+   Created a dedicated VM (`ubuntu-aws`) with static IP `192.168.2.44` (Hamilton tribute ✨)
 
-> "And it's lights out and away we go!" — tribute to Lewis Hamilton #44
+2. **SSH Key Integration**  
+   Connected from Windows via `ssh ubuntu-aws` using secure key-based login
 
-## 🛠️ Tools Used
+3. **Terraform Init & Apply**  
+   Provisioned AWS S3 bucket and uploaded a custom F1-themed website
 
-- **AWS S3** for static site hosting
-- **Terraform** for infrastructure as code
-- **Ubuntu 24.04** VM running on **ESXi** in homelab
-- **Git** and **GitHub** for version control
+4. **Version Control**  
+   Clean repo pushed to [GitHub](https://github.com/dj-3dub/aws-f1-static-site), excluding Terraform state and cache files
 
-## 🌐 Live Site
+## 🛡️ Security
 
-[View live site on AWS S3](http://f1-homelab-site-49c3df1f.s3-website-us-east-1.amazonaws.com)
+- IAM user with scoped-down permissions used for Terraform
+- `.terraform/` and `.tfstate` files excluded via `.gitignore`
 
-## 📁 Project Structure
+## 🔗 Live Website
+
+🌐 [f1-homelab-site-49c3df1f.s3-website-us-east-1.amazonaws.com](http://f1-homelab-site-49c3df1f.s3-website-us-east-1.amazonaws.com/)
+
+## 🎯 Next Goals
+
+- [ ] Add **CloudFront** CDN
+- [ ] Enable **Route 53** custom domain (`f1.djhomelab.com`)
+- [ ] Set up **GitHub Actions** for CI/CD deployments
+- [ ] Monitor access logs via **CloudWatch**
+
+---
+
+## 🙌 Why This Matters
+
+This project isn't just a tech demo — it's a personal reflection of my passion for Formula 1 and cloud engineering. It's also part of my journey toward becoming a **Solutions Architect** or **DevOps/Infrastructure Engineer**, backed by hands-on AWS and Terraform experience.
