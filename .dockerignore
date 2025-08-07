@@ -1,0 +1,9 @@
+maintenance/
+terraform/
+*.sh
+*.tf
+*.tfstate*
+README.md
+.git*
+Dockerfile
+.dockerignore
