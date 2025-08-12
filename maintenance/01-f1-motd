@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# /etc/update-motd.d/01-f1-motd
+# F1-themed MOTD with OS version + system stats
+
+# ---------- colors ----------
+if command -v tput >/dev/null 2>&1; then
+  RST="$(tput sgr0)"
+  BOLD="$(tput bold)"
+  RED="$(tput setaf 1)"
+  GRN="$(tput setaf 2)"
+  YEL="$(tput setaf 3)"
+  BLU="$(tput setaf 4)"
+  CYN="$(tput setaf 6)"
+  WHT="$(tput setaf 7)"
+else
+  RST=""; BOLD=""; RED=""; GRN=""; YEL=""; BLU=""; CYN=""; WHT=""
+fi
+
+# ---------- trophy ----------
+cat <<'ASCII' | sed "s/.*/\x1b[1;33m&\x1b[0m/"
+        ___________
+       '._==_==_=_.'      🏁
+       .-\:      /-.     
+      | (|:.     |) |    
+       '-|:.     |-'     
+         \::.    /       
+          '::. .'        
+            ) (          
+          _.' '._        
+         '-------'       
+ASCII
+echo
+
+# ---------- system info ----------
+HOSTNAME=$(hostname)
+OS=$( (lsb_release -ds 2>/dev/null || uname -s) | sed 's/"//g')
+KERNEL=$(uname -r)
+UPTIME=$(uptime -p | sed 's/^up //')
+LOAD=$(awk '{print $1" "$2" "$3}' /proc/loadavg)
+MEM=$(free -h | awk '/^Mem:/ {print $3" / "$2}')
+ROOTDISK=$(df -h / | awk 'NR==2 {print $3" / "$2" ("$5")"}')
+
+# Primary IPv4 (best effort)
+IPV4=$(ip -4 route get 1.1.1.1 2>/dev/null | awk '/src/ {for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}')
+[ -z "$IPV4" ] && IPV4=$(hostname -I 2>/dev/null | awk '{print $1}')
+
+printf "%s%sF1 Host:%s %s\n" "$BOLD" "$CYN" "$RST" "$HOSTNAME"
+echo "--------------------------------------------"
+printf "%-12s %s\n" "OS"        "$OS"
+printf "%-12s %s\n" "Kernel"    "$KERNEL"
+printf "%-12s %s\n" "Uptime"    "$UPTIME"
+printf "%-12s %s\n" "Load Avg"  "$LOAD"
+printf "%-12s %s\n" "Memory"    "$MEM"
+printf "%-12s %s\n" "Disk (/)"  "$ROOTDISK"
+printf "%-12s %s\n" "IP"        "${IPV4:-N/A}"
+echo
+
+# ---------- updates (fast, if available) ----------
+APT_CHECK=/usr/lib/update-notifier/apt-check
+if [ -x "$APT_CHECK" ]; then
+  # returns "N;S" where N=upgradable pkgs, S=security updates
+  IFS=';' read -r N S < <("$APT_CHECK" 2>/dev/null || echo "0;0")
+  if [ "${N:-0}" -gt 0 ] || [ "${S:-0}" -gt 0 ]; then
+    printf "%sUpdates:%s %s total, %s security\n" "$YEL" "$RST" "$N" "$S"
+  else
+    printf "%sUpdates:%s system is up to date\n" "$GRN" "$RST"
+  fi
+  echo
+fi
+
+# ---------- services you care about (optional quick checks) ----------
+# Add or remove service names as needed:
+CHECK_SERVICES=("sshd")
+HAS_SYSTEMCTL=0; command -v systemctl >/dev/null 2>&1 && HAS_SYSTEMCTL=1
+
+if [ "$HAS_SYSTEMCTL" -eq 1 ]; then
+  printf "%sService status:%s\n" "$BLU" "$RST"
+  for SVC in "${CHECK_SERVICES[@]}"; do
+    if systemctl is-active --quiet "$SVC"; then
+      printf "  %-10s %sactive%s\n" "$SVC" "$GRN" "$RST"
+    else
+      printf "  %-10s %sinactive%s\n" "$SVC" "$RED" "$RST"
+    fi
+  done
+  echo
+fi
+
+# ---------- last login (nice to know) ----------
+LAST=$(last -n 2 -ai | awk 'NR==2{print $1,$3,$4,$5,$6,$7,$8,$9}')
+[ -n "$LAST" ] && printf "%sLast login:%s %s\n" "$CYN" "$RST" "$LAST"
+
+echo

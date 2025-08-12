@@ -47,3 +47,6 @@ git clone https://github.com/dj-3dub/aws-f1-static-site.git
 cd aws-f1-static-site
 docker build -t aws-f1-website .
 docker run -d --name f1site -p 8080:80 aws-f1-website
+
+## MOTD
+See [01-f1-motd](maintenance/01-f1-motd).
