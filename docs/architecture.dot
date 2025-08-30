@@ -1,0 +1,59 @@
+digraph "AWS F1 Static Site" {
+  rankdir=LR;
+  graph [bgcolor="white", fontsize=11, labelloc="t", label="AWS F1 Static Website (current + next)"];
+  node  [shape=box, style="rounded,filled", fontsize=10, fillcolor="#eef5ff"];
+  edge  [fontsize=9];
+
+  // --- Local / Dev ---
+  subgraph cluster_local {
+    label="Local / Dev";
+    style="rounded,filled"; fillcolor="#f8f9fb";
+    DEV [label="Dev workstation\n(Windows / VS Code)", shape=box3d, fillcolor="#ffffff"];
+    TF  [label="ubuntu-aws (192.168.2.44)\nTerraform host", fillcolor="#f3f7ff"];
+  }
+
+  // --- GitHub ---
+  subgraph cluster_gh {
+    label="GitHub";
+    style="rounded,filled"; fillcolor="#f3f7ff";
+    REPO [label="Repo: aws-f1-static-site\n(main)"];
+    GHCI [label="GitHub Actions (future)", fillcolor="#fff7e6"];
+  }
+
+  // --- AWS (Current) ---
+  subgraph cluster_aws {
+    label="AWS";
+    style="rounded,filled"; fillcolor="#eef7ff";
+
+    S3  [label="S3 bucket (static website)\nWebsite endpoint\n(e.g., f1-homelab-site-…)", shape=folder];
+
+    IAM [label="IAM user (scoped)\nfor Terraform", shape=component, fillcolor="#eef5ff"];
+  }
+
+  // --- AWS (Next goals) ---
+  subgraph cluster_next {
+    label="Planned Enhancements";
+    style="rounded,dashed"; color="#999999"; fillcolor="#f6f9ff";
+    CF  [label="CloudFront (CDN) + ACM\nHTTPS", style="rounded,filled", fillcolor="#eaf3ff"];
+    R53 [label="Route 53 (optional DNS)", style="rounded,filled", fillcolor="#eaf3ff"];
+    CW  [label="CloudWatch Logs\n(Access logs/monitoring)", style="rounded,filled", fillcolor="#eaf3ff"];
+  }
+
+  // Users
+  USER [label="Browser users", shape=oval, fillcolor="#ffffff"];
+
+  // Flows (current)
+  DEV -> REPO [label="git push"];
+  DEV -> TF   [label="ssh"];
+  TF  -> IAM  [label="AWS API auth"];
+  TF  -> S3   [label="terraform apply\n(create bucket, upload site)"];
+  USER -> S3  [label="HTTP (website endpoint)", color="#555555"];
+
+  // Flows (future)
+  REPO -> GHCI [label="CI/CD build", style=dashed];
+  GHCI -> S3   [label="sync site artifacts", style=dashed];
+  USER -> CF   [label="HTTPS", style=dashed];
+  CF   -> S3   [label="origin", style=dashed];
+  R53  -> CF   [label="CNAME/ALIAS", style=dashed];
+  S3   -> CW   [label="access logs", style=dashed];
+}
