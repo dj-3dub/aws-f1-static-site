@@ -7,9 +7,6 @@ on:
       - 'docs/architecture.dot'
       - 'render-diagram.sh'
       - '.github/workflows/diagram.yml'
-    paths-ignore:
-      - 'docs/architecture.png'
-      - 'docs/architecture.svg'
   workflow_dispatch:
 
 permissions:
