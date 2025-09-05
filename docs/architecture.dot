@@ -11,7 +11,7 @@ digraph "AWS F1 Static Site" {
     DEV [label="Dev workstation\n(Windows / VS Code)", shape=box3d, fillcolor="#ffffff"];
     TF  [label="ubuntu-aws (192.168.2.44)\nTerraform host", fillcolor="#f3f7ff"];
   }
-
+// test trigger - safe to remove later
   // --- GitHub ---
   subgraph cluster_gh {
     label="GitHub";
