@@ -1,0 +1,49 @@
+name: Render Architecture Diagram
+
+
+on:
+push:
+paths:
+- 'docs/architecture.dot'
+- 'render-diagram.sh'
+workflow_dispatch: {}
+
+
+permissions:
+contents: write # needed to push the generated images back
+
+
+jobs:
+render:
+runs-on: ubuntu-latest
+steps:
+- name: Checkout
+uses: actions/checkout@v4
+
+
+- name: Install Graphviz
+run: |
+sudo apt-get update
+sudo apt-get install -y graphviz
+
+
+- name: Render diagram
+run: |
+set -euo pipefail
+if [ -x ./render-diagram.sh ]; then
+./render-diagram.sh
+else
+mkdir -p docs
+dot -Tpng docs/architecture.dot -o docs/architecture.png
+dot -Tsvg docs/architecture.dot -o docs/architecture.svg
+echo "Rendered docs/architecture.png and docs/architecture.svg"
+fi
+
+
+- name: Commit & push
+uses: stefanzweifel/git-auto-commit-action@v5
+with:
+commit_message: "chore(ci): render architecture diagram"
+file_pattern: |
+docs/architecture.png
+docs/architecture.svg
