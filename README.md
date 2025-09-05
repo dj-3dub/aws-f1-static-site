@@ -64,29 +64,28 @@ You can spin it up with Docker—no AWS or extra config needed.
 
 ```bash
 git clone https://github.com/dj-3dub/aws-f1-static-site.git
-cd aws-f1-static-site
+cd aws-f1-static-site---
+
+## ⚙️ GitHub Actions
+
+This repo includes a workflow at `.github/workflows/diagram.yml` that:
+
+- **Auto-renders** the architecture diagram (`.png` and `.svg`) when `docs/architecture.dot` changes  
+- **Commits** the generated images back into the repo  
+- **Provides** a status badge (see top of this README ✅)
+
+### Planned CI/CD additions
+
+- Terraform validation & linting  
+- Automated deployments to S3  
+- Integration with CloudFront + ACM once added  
+
+---
+
+## 💡 Why This Matters
+
+This project isn’t just a tech demo — it’s a personal reflection of my passion for **Formula 1** and **cloud engineering**.  
+By combining DevOps, automation, and AWS services, I’m showing how infrastructure can be both **functional** and **fun**.
 docker build -t aws-f1-website .
-docker run -d --name f1site -p 8080:80 aws-f1-website⚙️ GitHub Actions
-
-This repo includes a workflow at .github/workflows/diagram.yml that:
-
-Auto-renders the architecture diagram (.png and .svg) when docs/architecture.dot changes
-
-Commits the generated images back into the repo
-
-Provides a status badge (see top of this README ✅)
-
-Planned CI/CD additions:
-
-Terraform validation & linting
-
-Automated deployments to S3
-
-Integration with CloudFront + ACM once added
-
-💡 Why This Matters
-
-This project isn’t just a tech demo — it’s a personal reflection of my passion for Formula 1 and cloud engineering.
-By combining DevOps, automation, and AWS services, I’m showing how infrastructure can be both functional and fun.
-
+docker run -d --name f1site -p 8080:80 aws-f1-website
 
