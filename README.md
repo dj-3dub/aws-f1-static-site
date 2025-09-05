@@ -1,7 +1,5 @@
 # AWS F1 Static Site 🏎️
 
-[![Render Architecture Diagram](https://github.com/dj-3dub/aws-f1-static-site/actions/workflows/diagram.yml/badge.svg)](https://github.com/dj-3dub/aws-f1-static-site/actions/workflows/diagram.yml)
-
 Formula 1–themed static website deployed to AWS using **Terraform**, **Docker**, and optionally extended with **CloudFront**, **ACM (TLS)**, **GitHub Actions**, and **CloudWatch**.  
 A homelab project that combines cloud engineering best practices with my passion for F1. 🏁
 
