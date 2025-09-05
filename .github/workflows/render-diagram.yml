@@ -1,0 +1,21 @@
+name: Render architecture diagram
+on:
+  push:
+    paths:
+      - 'docs/architecture.dot'
+      - '.github/workflows/render-diagram.yml'
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: ${{ github.head_ref }} }
+      - run: sudo apt-get update && sudo apt-get install -y graphviz
+      - run: |
+          dot -Tsvg docs/architecture.dot -o docs/architecture.svg
+          dot -Tpng docs/architecture.dot -o docs/architecture.png
+      - uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "chore(diagram): render docs/architecture.svg/png"
+          file_pattern: docs/architecture.svg docs/architecture.png
