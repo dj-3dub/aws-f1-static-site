@@ -7,10 +7,13 @@ on:
       - 'docs/architecture.dot'
       - 'render-diagram.sh'
       - '.github/workflows/diagram.yml'
+    paths-ignore:
+      - 'docs/architecture.png'
+      - 'docs/architecture.svg'
   workflow_dispatch:
 
 permissions:
-  contents: write  # allow committing generated images
+  contents: write
 
 concurrency:
   group: diagram-${{ github.ref }}
@@ -25,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Mark workspace safe for git (avoids 'dubious ownership')
+      - name: Mark workspace safe for git
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Ensure docs folder exists
